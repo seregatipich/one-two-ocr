@@ -7,7 +7,7 @@ setup(
     author="Sergei Poluektov",
     author_email="seregatipich@outlook.com",
     packages=find_packages(),
-    install_requires=["pytesseract", "pdf2image", "Pillow", "logging"],
+    install_requires=["numpy", "opencv-python", "Pillow", "PyMuPDF", "logging"],
     entry_points={
         "console_scripts": [
             "one-two-ocr=one_two_ocr.cli:main",
