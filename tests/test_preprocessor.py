@@ -9,7 +9,6 @@ from one_two_ocr_utils.preprocessor import preprocess_image
 class TestPreprocessor(unittest.TestCase):
 
     def setUp(self):
-        # Create a simple white image for testing
         self.image = Image.fromarray(np.ones((100, 100, 3), dtype=np.uint8) * 255)
 
     def test_preprocess_image_default(self):
