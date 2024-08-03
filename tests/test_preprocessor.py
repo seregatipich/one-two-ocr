@@ -34,24 +34,43 @@ class TestPreprocessor(unittest.TestCase):
 
     def test_preprocess_image_noise_removal(self):
         processed_image = preprocess_image(self.image, noise_removal=True)
-        # Assert that processing did not fail
-        self.assertIsInstance(processed_image, Image.Image)
+        self.assertIsInstance(
+            processed_image,
+            Image.Image,
+            "Processed image should still be an instance of PIL.Image.Image",
+        )
 
     def test_preprocess_image_threshold(self):
         processed_image = preprocess_image(self.image, threshold=True)
-        self.assertIsInstance(processed_image, Image.Image)
+        self.assertIsInstance(
+            processed_image,
+            Image.Image,
+            "Processed image should still be an instance of PIL.Image.Image",
+        )
 
     def test_preprocess_image_dilation(self):
         processed_image = preprocess_image(self.image, dilation=True)
-        self.assertIsInstance(processed_image, Image.Image)
+        self.assertIsInstance(
+            processed_image,
+            Image.Image,
+            "Processed image should still be an instance of PIL.Image.Image",
+        )
 
     def test_preprocess_image_erosion(self):
         processed_image = preprocess_image(self.image, erosion=True)
-        self.assertIsInstance(processed_image, Image.Image)
+        self.assertIsInstance(
+            processed_image,
+            Image.Image,
+            "Processed image should still be an instance of PIL.Image.Image",
+        )
 
     def test_preprocess_image_edge_detection(self):
         processed_image = preprocess_image(self.image, edge_detection=True)
-        self.assertIsInstance(processed_image, Image.Image)
+        self.assertIsInstance(
+            processed_image,
+            Image.Image,
+            "Processed image should still be an instance of PIL.Image.Image",
+        )
 
 
 if __name__ == "__main__":

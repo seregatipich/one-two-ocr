@@ -61,13 +61,16 @@ def preprocess_image(
             logging.info("Edge detection applied to image.")
 
         # Convert back to PIL format
-        image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        if grayscale:
+            image = Image.fromarray(image, "L")
+        else:
+            image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
         logging.info("Image preprocessing completed.")
         return image
 
     except Exception as e:
-        log_processing_status(f"Error preprocessing image: {e}")
+        logging.error(f"Error preprocessing image: {e}")
         return image
 
 
