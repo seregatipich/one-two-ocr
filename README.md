@@ -156,11 +156,12 @@ We welcome contributions to improve **One Two OCR**! If you would like to contri
 This library is licensed under the [MIT License](https://opensource.org/licenses/MIT). Feel free to use, modify, and distribute it as per the terms of the license.
 
 ## Contact
+
 For questions or issues, feel free to reach out:
 
-- **Author**: Your Name
-- **Email**: [your.email@example.com](mailto:your.email@example.com)
-- **GitHub**: [yourusername](https://github.com/yourusername)
+- **Author**: Sergei Poluektov
+- **Email**: [seregatipich@outlook.com](mailto:seregatipich@outlook.com)
+- **GitHub**: [seregatipich](https://github.com/seregatipich)
 
 ---
 
