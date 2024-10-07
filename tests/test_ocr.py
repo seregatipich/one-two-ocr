@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from src.ocr import OCR
+from one_two_ocr.ocr import OCR
 from PIL import Image
 
 
