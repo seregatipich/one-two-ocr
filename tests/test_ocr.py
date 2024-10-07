@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from one_two_ocr.ocr import OCR
 from PIL import Image
+
+from one_two_ocr.ocr import OCR
 
 
 class TestOCR(unittest.TestCase):
