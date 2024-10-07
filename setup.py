@@ -3,8 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="one-two-ocr",
     version="0.1.0",
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=find_packages(exclude=["tests"]),
     install_requires=[
         "pytesseract==0.3.10",
         "pdf2image==1.16.3",
