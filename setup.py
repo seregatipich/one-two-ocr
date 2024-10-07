@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ocr",
+    name="one-two-ocr",
     version="0.1.0",
-    packages=find_packages(),
+    packages=find_packages(include=["src", "src.*"]),
     install_requires=[
         "pytesseract==0.3.10",
         "pdf2image==1.16.3",
@@ -11,7 +11,6 @@ setup(
         "opencv-python==4.5.5.64",
         "numpy>=1.21.0,<2.0.0",
     ],
-    entry_points={"console_scripts": ["ocr=ocr:main"]},
     author="Your Name",
     author_email="your.email@example.com",
     description="A simple OCR library for processing images and PDFs.",
