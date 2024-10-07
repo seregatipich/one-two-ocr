@@ -163,3 +163,4 @@ cython_debug/
 
 TestOCR.pdf
 test.py
+test_document.pdf
