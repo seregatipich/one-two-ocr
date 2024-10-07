@@ -9,7 +9,7 @@ setup(
         "pdf2image==1.16.3",
         "Pillow==9.0.1",
         "opencv-python==4.5.5.64",
-        "numpy==1.21.5",
+        "numpy>=1.21.0,<2.0.0",
     ],
     entry_points={"console_scripts": ["ocr=ocr:main"]},
     author="Your Name",
