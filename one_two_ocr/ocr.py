@@ -43,7 +43,15 @@ class OCR:
             )
             text = ""
             for i, page in enumerate(pages):
-                page_text = pytesseract.image_to_string(page)
+                logger.info("Processing page %d of %s", i + 1, pdf_path)
+                # Convert PIL Image to OpenCV image
+                open_cv_image = np.array(page)
+                # Convert RGB to BGR format
+                open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
+                # Enhance and de-skew the image
+                enhanced_image = self.enhance_image_from_array(open_cv_image)
+                # Perform OCR
+                page_text = pytesseract.image_to_string(enhanced_image)
                 logger.debug(
                     "OCR text from page %d of %s: %s", i + 1, pdf_path, page_text[:50]
                 )
@@ -68,7 +76,7 @@ class OCR:
                     (".png", ".jpg", ".jpeg", ".tiff", ".bmp", ".gif")
                 ):
                     logger.info("Processing image file: %s", path)
-                    results[path] = self.process_image(path)
+                    results[path] = self.process_image_with_enhancement(path)
                 else:
                     logger.warning("Unsupported file format: %s", path)
                     results[path] = f"Unsupported file format: {path}"
@@ -77,16 +85,69 @@ class OCR:
                 results[path] = str(e)
         return results
 
+    def deskew_image(self, image: np.ndarray) -> np.ndarray:
+        try:
+            logger.info("Deskewing image")
+            # Convert to grayscale and invert colors
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            gray = cv2.bitwise_not(gray)
+
+            # Thresholding
+            thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+
+            # Find coordinates of all non-zero pixels
+            coords = np.column_stack(np.where(thresh > 0))
+
+            # Compute the minimum area rectangle
+            angle = cv2.minAreaRect(coords)[-1]
+
+            # Correct the angle
+            if angle < -45:
+                angle = -(90 + angle)
+            else:
+                angle = -angle
+
+            # Rotate the image to deskew it
+            (h, w) = image.shape[:2]
+            center = (w // 2, h // 2)
+            M = cv2.getRotationMatrix2D(center, angle, 1.0)
+            deskewed = cv2.warpAffine(
+                image,
+                M,
+                (w, h),
+                flags=cv2.INTER_CUBIC,
+                borderMode=cv2.BORDER_REPLICATE,
+            )
+            logger.info("Image deskewed by angle: %f degrees", angle)
+            return deskewed
+        except Exception as e:
+            logger.error("Error deskewing image: %s", e)
+            raise ValueError(f"Error deskewing image: {e}")
+
     def enhance_image(self, image_path: str, output_path: str = None) -> np.ndarray:
         logger.info("Enhancing image: %s", image_path)
         try:
             image = cv2.imread(image_path)
             if image is None:
                 raise ValueError(f"Image {image_path} could not be read")
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+            # Deskew the image
+            deskewed_image = self.deskew_image(image)
+
+            # Convert to grayscale
+            gray = cv2.cvtColor(deskewed_image, cv2.COLOR_BGR2GRAY)
+
+            # Denoise
             denoised = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
+
+            # Enhance
             enhanced = cv2.adaptiveThreshold(
-                denoised, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
+                denoised,
+                255,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY,
+                11,
+                2,
             )
             if output_path:
                 cv2.imwrite(output_path, enhanced)
@@ -98,6 +159,40 @@ class OCR:
         except Exception as e:
             logger.error("Error enhancing image %s: %s", image_path, e)
             raise ValueError(f"Error enhancing image {image_path}: {e}")
+
+    def enhance_image_from_array(
+        self, image: np.ndarray, output_path: str = None
+    ) -> np.ndarray:
+        logger.info("Enhancing image from array")
+        try:
+            if image is None:
+                raise ValueError("Input image is None")
+
+            # Deskew the image
+            deskewed_image = self.deskew_image(image)
+
+            # Convert to grayscale
+            gray = cv2.cvtColor(deskewed_image, cv2.COLOR_BGR2GRAY)
+
+            # Denoise
+            denoised = cv2.fastNlMeansDenoising(gray, None, 10, 7, 21)
+
+            # Enhance
+            enhanced = cv2.adaptiveThreshold(
+                denoised,
+                255,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                cv2.THRESH_BINARY,
+                11,
+                2,
+            )
+            if output_path:
+                cv2.imwrite(output_path, enhanced)
+                logger.info("Enhanced image saved to: %s", output_path)
+            return enhanced
+        except Exception as e:
+            logger.error("Error enhancing image from array: %s", e)
+            raise ValueError(f"Error enhancing image from array: {e}")
 
     def process_image_with_enhancement(self, image_path: str) -> str:
         logger.info("Processing image with enhancement: %s", image_path)
